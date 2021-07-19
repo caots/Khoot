@@ -28,8 +28,9 @@ export default class MsValidate {
 
   public validateUpdateAssessment(obj: any) {
     const object = {
+      id: Joi.number(),
+      join_key: Joi.string(),
       title: Joi.string().required(),
-      join_key: Joi.string().required(),
       time: Joi.number().required(),
       user_id: Joi.number().required(),
       number_of_question: Joi.number().required(),

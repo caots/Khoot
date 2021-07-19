@@ -153,6 +153,7 @@ export default class AssessmentService {
   public async deleteAssessment(assessment: AssessmentModel): Promise<AssessmentModel> {
     try {
       assessment.is_deleted = IS_DELETED.Yes;
+      delete assessment.questions;
       const newAssessment = await AssessmentModel.query().updateAndFetchById(assessment.id, assessment);
       return newAssessment;
     } catch (err) {

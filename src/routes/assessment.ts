@@ -15,12 +15,12 @@ export default class AssessmentRouter {
     this.config();
   }
   private config() {
-    this.router.get("/list", this.authController.authenticateJWT, checkTeacher, checkTeacher(), this.assessmentController.getAllAssessment);
-    this.router.get("/:id", this.authController.authenticateJWT, checkTeacher, checkTeacher(), this.assessmentController.getDetailsAssessment);
-    this.router.post("/", this.authController.authenticateJWT, checkTeacher, checkTeacher(), this.assessmentController.createAssessment);
-    this.router.put("/", this.authController.authenticateJWT, checkTeacher, checkTeacher(), this.assessmentController.updateAssessment);
-    this.router.put("/status/", this.authController.authenticateJWT, checkTeacher, checkTeacher(), this.assessmentController.updateStatusAssessment);
-    this.router.delete("/:id", this.authController.authenticateJWT, checkTeacher, checkTeacher(), this.assessmentController.deleteAssessment);
+    this.router.get("/list", this.authController.authenticateJWT, checkTeacher(), this.assessmentController.getAllAssessment);
+    this.router.get("/:id", this.authController.authenticateJWT, checkTeacher(), this.assessmentController.getDetailsAssessment);
+    this.router.post("/", this.authController.authenticateJWT, checkTeacher(), this.assessmentController.createAssessment);
+    this.router.put("/", this.authController.authenticateJWT, checkTeacher(), this.assessmentController.updateAssessment);
+    this.router.put("/status/", this.authController.authenticateJWT, checkTeacher(), this.assessmentController.updateStatusAssessment);
+    this.router.delete("/:id", this.authController.authenticateJWT, checkTeacher(), this.assessmentController.deleteAssessment);
   }
 
 }

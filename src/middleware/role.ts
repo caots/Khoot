@@ -16,8 +16,8 @@ export const checkRole = () => {
 
 export const checkTeacher = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const adminUser = req["currentUser"] as UserModel;
-    if (adminUser.role_id === USER_ROLE.Customer && adminUser.status === USER_STATUS.active) {
+    const user = req["currentUser"] as UserModel;
+    if (user.role_id === USER_ROLE.Customer && user.status === USER_STATUS.active) {
       return next();
     } 
     return forbidden({ message: COMMON_ERROR.notPermission }, req, res);

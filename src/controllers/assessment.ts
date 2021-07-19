@@ -12,7 +12,7 @@ export default class AssessmentController {
   public async getAllAssessment(req: Request, res: Response, next: NextFunction) {
     try {
       const assessmentService = new AssessmentService();
-      const userId = get(req, "query.user_id", null);
+      const userId = get(req, "query.userId", null);
       const title = get(req, "query.title", null);
       const order = get(req, "query.order", null);
       const status = get(req, "query.status", null);
@@ -44,6 +44,7 @@ export default class AssessmentController {
       const assessment = await msValidate.validateUpdateAssessment(req.body);
       assessment.status = COMMON_STATUS.Active;
       assessment.is_deleted = IS_DELETED.No;
+      assessment.join_key = `${new Date().getTime()}-${assessment.user_id}`;
       const assessmentService = new AssessmentService();
       const questions = assessment?.questions || [];
       delete assessment.questions;
@@ -76,6 +77,7 @@ export default class AssessmentController {
       const assessmentService = new AssessmentService();
       const assessment = await assessmentService.getDetailsAssessment(id);
       if (!assessment) return badRequest({ message: "Find not found this assessment!" }, req, res);
+      delete assessment.questions;
       let results = await assessmentService.updateStatusAssessment(assessment, status);
       return ok(results, req, res);
     } catch (err) {
@@ -95,4 +97,4 @@ export default class AssessmentController {
       next(err);
     }
   }
-}
+} 
