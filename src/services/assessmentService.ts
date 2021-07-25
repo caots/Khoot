@@ -36,10 +36,7 @@ export default class AssessmentService {
       if (title) {
         query = query.where(builder => builder.where("assessment.title", "like", `%${title}%`))
       }
-      if (orderNo) {
-        query = query.orderBy(orderArrays[0], orderArrays[1])
-      }
-
+      query = query.orderBy(orderArrays[0], orderArrays[1]);
       query = query.whereRaw(this.genQueryCompareDateCart(fromDate, toDate));
       const listAssessment = await query.page(page, pageSize);
       listAssessment.results = await Promise.all(
@@ -80,8 +77,8 @@ export default class AssessmentService {
               const newQuestion = {
                 title: question.title,
                 type: question.type,
-                answers: question.answers,
-                full_answers: question.full_answers,
+                answers: JSON.stringify(question.answers),
+                full_answers: JSON.stringify(question.full_answers),
                 point: question.point,
                 image: question.image,
                 assessment_id: newAssessment.id
@@ -120,8 +117,8 @@ export default class AssessmentService {
                 const newQuestion = {
                   title: question.title,
                   type: question.type,
-                  answers: question.answers,
-                  full_answers: question.full_answers,
+                  answers: JSON.stringify(question.answers),
+                  full_answers: JSON.stringify(question.full_answers),
                   point: question.point,
                   image: question.image,
                   assessment_id: updateAssessment.id
