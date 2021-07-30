@@ -167,3 +167,10 @@ ADD COLUMN `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP AFTER `created_a
 ALTER TABLE `khoot`.`result_assessment` 
 ADD COLUMN `created_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP AFTER `point`,
 ADD COLUMN `updated_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP AFTER `created_at`;
+
+ALTER TABLE `khoot`.`result_assessment` 
+ADD COLUMN `results` VARCHAR(255) NULL AFTER `updated_at`;
+
+ALTER TABLE `khoot`.`result_assessment` 
+CHANGE COLUMN `id` `id` INT(11) NOT NULL AUTO_INCREMENT ;
+

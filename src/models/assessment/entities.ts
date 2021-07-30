@@ -11,4 +11,5 @@ export default interface Assessment{
   updated_at?: string;
   created_at?: string;
   questions?: any;
+  listResults?: any;
 }

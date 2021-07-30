@@ -50,6 +50,16 @@ export default class AssessmentController {
     }
   }
 
+  public async createResultsAssessment(req: Request, res: Response, next: NextFunction) {
+    try {
+      const assessmentService = new AssessmentService();
+      let results = await assessmentService.createResultsAssessment(req.body);
+      return ok({ message: "Submited Assessment success" }, req, res);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   public async createAssessment(req: Request, res: Response, next: NextFunction) {
     try {
       const msValidate = new MsValidate();

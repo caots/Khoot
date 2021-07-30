@@ -34,7 +34,7 @@ export default class AssessmentService {
         query = query.where("assessment.user_id", userId);
       }
       if (title) {
-        query = query.where(builder => builder.where("assessment.title", "like", `%${title}%`))
+        query = query.where(builder => builder.where("assessment.title", "like", `%${title}%`).orWhere('assessment.join_key', title))
       }
       query = query.orderBy(orderArrays[0], orderArrays[1]);
       query = query.whereRaw(this.genQueryCompareDateCart(fromDate, toDate));
@@ -61,7 +61,8 @@ export default class AssessmentService {
         .andWhere("assessment.join_key", joinKey);
       const listOrder = await this.getAllQuestionAssessment(assessment[0].id, true);
       assessment[0].questions = listOrder;
-      //await PlayerModel.query().insert({ name: name });
+      const palyer = await PlayerModel.query().insert({ name: name });
+      assessment[0].player = palyer;
       return assessment[0];
     } catch (err) {
       throw new HttpException(500, err.message);
@@ -73,8 +74,37 @@ export default class AssessmentService {
       let query = AssessmentModel.query().findById(assessmentId);
       const assessment = await query;
       const listQuestion = await this.getAllQuestionAssessment(assessment.id);
+      const listResultAssessment = await this.getAllRersultAssessment(assessment.id);
       assessment.questions = listQuestion;
+      assessment.listResults = listResultAssessment;
       return assessment;
+    } catch (err) {
+      throw new HttpException(500, err.message);
+    }
+  }
+
+  public createResultsAssessment(data: any): Promise<any> {
+    try {
+      const playerId = data.playerId;
+      const assessment_id = data.id;
+
+      const questions = data.questions;
+      let results = [];
+      questions.map((question, index) => {
+        let checkCorrectAnsw = -1;
+        question.answers.map((ans, i) => {
+          if (ans.status) checkCorrectAnsw = i;
+        });
+        results.push(checkCorrectAnsw);
+      })
+
+      const newResultAssessment = {
+        player_id: playerId,
+        assessment_id: assessment_id,
+        point: 0,
+        results: JSON.stringify(results)
+      } as ResultAssessmentModel;
+      return ResultAssessmentModel.query().insert(newResultAssessment);
     } catch (err) {
       throw new HttpException(500, err.message);
     }
@@ -190,6 +220,19 @@ export default class AssessmentService {
           .where("question.assessment_id", assessmentId);
       }
       return listOrder;
+    } catch (err) {
+      throw new HttpException(500, err.message);
+    }
+  }
+
+  public async getAllRersultAssessment(assessmentId: number): Promise<ResultAssessmentModel[]> {
+    try {
+      let listResult = await ResultAssessmentModel.query()
+        .select([
+          "result_assessment.*", "PL.name as name_player"
+        ]).leftJoin("player as PL", "result_assessment.player_id", "PL.id")
+        .where("result_assessment.assessment_id", assessmentId);
+      return listResult;
     } catch (err) {
       throw new HttpException(500, err.message);
     }
