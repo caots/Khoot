@@ -53,6 +53,21 @@ export default class AssessmentService {
     }
   }
 
+  public async getAssessmentByJoinKey(joinKey: string, name: string): Promise<any> {
+    try {
+      let assessment: any = await AssessmentModel.query()
+        .select(["assessment.*"]).where("assessment.is_deleted", IS_DELETED.No)
+        .andWhere("assessment.status", COMMON_STATUS.Active)
+        .andWhere("assessment.join_key", joinKey);
+      const listOrder = await this.getAllQuestionAssessment(assessment[0].id, true);
+      assessment[0].questions = listOrder;
+      //await PlayerModel.query().insert({ name: name });
+      return assessment[0];
+    } catch (err) {
+      throw new HttpException(500, err.message);
+    }
+  }
+
   public async getDetailsAssessment(assessmentId: number): Promise<any> {
     try {
       let query = AssessmentModel.query().findById(assessmentId);
@@ -158,13 +173,22 @@ export default class AssessmentService {
     }
   }
 
-  public async getAllQuestionAssessment(assessmentId: number): Promise<QuestionModel[]> {
+  public async getAllQuestionAssessment(assessmentId: number, isPlayer = false): Promise<QuestionModel[]> {
     try {
-      const listOrder = await QuestionModel.query()
-        .select([
-          "question.*"
-        ]).leftJoin("assessment as ASS", "question.assessment_id", "ASS.id")
-        .where("question.assessment_id", assessmentId);
+      let listOrder;
+      if (isPlayer) {
+        listOrder = await QuestionModel.query()
+          .select([
+            "question.id", "question.title", "question.type", "question.answers", "question.point", "question.created_at", "question.updated_at", "question.image"
+          ]).leftJoin("assessment as ASS", "question.assessment_id", "ASS.id")
+          .where("question.assessment_id", assessmentId);
+      } else {
+        listOrder = await QuestionModel.query()
+          .select([
+            "question.*"
+          ]).leftJoin("assessment as ASS", "question.assessment_id", "ASS.id")
+          .where("question.assessment_id", assessmentId);
+      }
       return listOrder;
     } catch (err) {
       throw new HttpException(500, err.message);

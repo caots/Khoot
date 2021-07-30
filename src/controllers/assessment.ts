@@ -27,6 +27,18 @@ export default class AssessmentController {
     }
   }
 
+  public async getAssessmentByJoinKey(req: Request, res: Response, next: NextFunction) {
+    try {
+      const assessmentService = new AssessmentService();
+      const joinKey = get(req, "query.joinKey", null);
+      const name = get(req, "query.name", null);
+      let results = await assessmentService.getAssessmentByJoinKey(joinKey, name);
+      return ok(results, req, res);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   public async getDetailsAssessment(req: Request, res: Response, next: NextFunction) {
     try {
       const id = get(req, "params.id", 0);

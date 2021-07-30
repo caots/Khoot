@@ -21,6 +21,8 @@ export default class AssessmentRouter {
     this.router.put("/", this.authController.authenticateJWT, checkTeacher(), this.assessmentController.updateAssessment);
     this.router.put("/status/", this.authController.authenticateJWT, checkTeacher(), this.assessmentController.updateStatusAssessment);
     this.router.delete("/:id", this.authController.authenticateJWT, checkTeacher(), this.assessmentController.deleteAssessment);
+    // player
+    this.router.get("/player/join", this.assessmentController.getAssessmentByJoinKey);
   }
 
 }
