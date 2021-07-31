@@ -30,6 +30,7 @@ export default class MsValidate {
     const object = {
       id: Joi.number(),
       join_key: Joi.string(),
+      listResults: Joi.array(),
       title: Joi.string().required(),
       time: Joi.number().required(),
       user_id: Joi.number().required(),

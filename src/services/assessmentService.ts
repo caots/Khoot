@@ -83,7 +83,7 @@ export default class AssessmentService {
     }
   }
 
-  public createResultsAssessment(data: any): Promise<any> {
+  public async createResultsAssessment(data: any): Promise<any> {
     try {
       const playerId = data.playerId;
       const assessment_id = data.id;
@@ -98,10 +98,21 @@ export default class AssessmentService {
         results.push(checkCorrectAnsw);
       })
 
+      // check point 
+      const assessment = await this.getDetailsAssessment(assessment_id);
+      let point = 0;
+      assessment.questions.map((question, index) => {
+        let checkCorrectAnsw = -1;
+        JSON.parse(question.full_answers).map((ans, i) => {
+          if (ans.status) checkCorrectAnsw = i
+        });
+        if(checkCorrectAnsw == results[index] && results[index] >= 0) point += question.point;
+      })
+
       const newResultAssessment = {
         player_id: playerId,
         assessment_id: assessment_id,
-        point: 0,
+        point: point,
         results: JSON.stringify(results)
       } as ResultAssessmentModel;
       return ResultAssessmentModel.query().insert(newResultAssessment);
@@ -184,8 +195,14 @@ export default class AssessmentService {
 
   public async updateStatusAssessment(assessment: AssessmentModel, status): Promise<AssessmentModel> {
     try {
+      const id = assessment.id;
       assessment.status = status;
-      const newAssessment = await AssessmentModel.query().updateAndFetchById(assessment.id, assessment);
+      delete assessment.id;
+      delete assessment.created_at;
+      delete assessment.updated_at;
+      delete assessment.listResults;
+      delete assessment.updated_at;
+      const newAssessment = await AssessmentModel.query().updateAndFetchById(id, assessment);
       return newAssessment;
     } catch (err) {
       throw new HttpException(500, err.message);
